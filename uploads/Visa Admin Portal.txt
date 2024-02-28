@@ -1,0 +1,9 @@
+Admin Portal
+1) Login/User Rights --> Admin, Staff
+2) Visa Applications View --> Submitted, Rejected, Accepted (download option), Draft; New Application
+3) Application Form --> Fields, Documents
+4) Unique Id of every applicant --> CNIC or Passport number --> All info saved on next fetch.
+3) Reciept on incomplete form for walk-in customer.
+6) Accounting module (walk in, corporate, travel agent) -> recieved/remaining amount, payment to be made to visa issuing authority
+7) Setup/Settings (application type fee, personal profit) visa type table with requirements and fee, exchange rate
+8) Reporting (e.g. visas issued in a certain time period, remmitance to be )

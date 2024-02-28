@@ -1,0 +1,8 @@
+Complaint Dashboard:
+
+1) Login/User Rights
+2) Complaint View Screen/Simple Analytics
+3) Complaint Management --> Assign/Re-assign to department or staff, Internal comments, Close complaint,Attachments
+4) Complaint Registration --> Form, Whatsapp integration.
+5) Automated messages/conversations
+5) Setup/Settings

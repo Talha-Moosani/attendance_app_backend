@@ -1,0 +1,116 @@
+/* THIS FILE HAS ALL THE RESPONSES TO BE RETURNED FROM CONTROLLERS */
+
+const responses = {
+  BAD_REQUEST: "Bad Request",
+  LOGIN_SUCCESS: "Logged in",
+  GENERIC_LOGIN_FAILED_ERROR: "Incorrect Email or Password provided",
+  USER_ALREADY_EXISTS: "Username or email already taken",
+  EMAIL_ALREADY_EXISTS: "Email already exist!",
+  USER_NOT_FOUND: "User not found",
+  USERS_NOT_FOUND: "Users not found",
+  USER_INFO_NOT_UPDATED: "Couldn't update user information",
+  FAQ_NOT_FOUND: "FAQ not found",
+  SESSION_NOT_FOUND: "User session does not exist",
+  LOG_OUT: "Logged out",
+  FILE_INVALID: "Please provide a valid file!",
+  NOT_FOUND: "Not found",
+  INVITATION_SENT: "Invitation sent successfully!",
+  INVITATION_EXIST: "This user has already registered",
+  PAYLOAD_INVALID: "Please provide valid payload!",
+  ALREADY_SUBMITTED: "You already submitted result",
+  USER_REGISTRATION_FAILURE: "Could not create user",
+  ADMIN_REGISTRATION_FAILURE: "Could not create admin",
+  ADMIN_REGISTRATION_SUCCESS: "Admin Registered Successfully!",
+  MISSING_PARAMETERS: "Missing parameters in the request body",
+  FAILURE: "Something went wrong",
+  INVALID_COOKIE: "Invalid or corrupt cookie provided",
+  INVALID_CREDENTIALS: "Email or password is incorrect",
+  INVALID_PASSWORD: "Incorrect password provided",
+  INVALID_EMAIL: "Email is incorrect",
+  INVALID_USERNAME: "Username is incorrect",
+  UNAUTHORIZED: "Not authorized for access",
+  INCORRECT_PASSWORD: "Incorrect password was provided",
+  UNIQUE_USERNAME_EMAIL: "Username and email must be unique.",
+  TOKEN_NOT_FOUND: "Token not found",
+  INVALID_TOKEN: "Token is invalid",
+
+  PRODUCT_CREATED: "Product created successfully.",
+  PRODUCT_UPDATED: "Product updated successfully.",
+  PROFILE_UPDATED: "Profile updated successfully",
+  PROSPER_POINTS_UPDATED: "Prosper points updated successfully",
+  RIGHTS_UPDATED: "Rights updated successfully",
+  CUSTOMER_UPDATED: "Customer updated successfully",
+  PRODUCT_DELETED: "Product deleted successfully.",
+  PRODUCT_NOT_CREATED: "Product creation unsuccessful.",
+  PRODUCT_NOT_UPDATED: "Product updation unsuccessful.",
+  PRODUCT_NOT_DELETED: "Product deletion unsuccessful.",
+  COLORS_NOT_FOUND: "colors not found",
+  SIZES_NOT_FOUND: "sizes not found",
+  PRODUCT_NOT_FOUND: "Product not found",
+  NO_PRODUCTS_FOUND: "No products found",
+
+  NO_COUNTRY_FOUND: "No countries found",
+  NO_STATE_FOUND: "No states found",
+  NO_CITY_FOUND: "No cities found",
+  ADDRESS_NOT_SAVED: "Could not save the address.",
+  ADDRESS_NOT_UPDATED: "Could not update the address.",
+  ADDRESS_NOT_DELETED: "Could not delete the address.",
+  ADDRESSES_NOT_FOUND: "Could not find any addresses",
+
+  ORDER_CREATED: "Order created successfully",
+  ORDER_NOT_CREATED: "Unable to save order",
+  ORDER_STATUS_NOT_UPDATED: "Unable to update order status.",
+  NO_ORDERS_FOUND: "No orders found",
+  ORDER_NOT_FOUND: "Order not found",
+
+  NO_CONVERSION_VALUE_FOUND: "Eth to Usd conversion could not be fetched",
+
+  SITE_LOGO_NOT_REMOVED: "Could not remove site logo",
+  NOT_REMOVED: "Could not remove",
+  NOT_UPDATED: "Could not update",
+  NOT_UPLOADED: "Failed to upload",
+  MESSAGE_NOT_POSTED: "Could not post message",
+  NOT_SUBMITTED: "Result not submitted",
+  SESSION_NOT_REMOVED: "Error removing user session",
+  REFRESH_TOKEN_NOT_UPDATED: "Could not update refresh token",
+  NO_RESULT: "No results found",
+  EMAIL_NOT_VERIFIED: "Could not verify email",
+  EMAIL_VERIFICATION_STATUS: "Please check your email for verification",
+  EMAIL_VERIFICATION_NOT_GENERATED: "Could not generate email verification",
+  SESSION_NOT_CREATED: "Could not create user session",
+  ALREADY_LOGGED_OUT: "You already logged out",
+  TIMEZONE_UPDATED: "Time Zone Update Sucessfully",
+  NOT_TIMEZONE_UPDATED: "Timezone Not Update, Try again",
+  NOT_TITLE_UPDATED: "Title Can Not Be Empty, Try again",
+  NOT_BANNER_UPDATED: "Banner is Not Update, Try again",
+  VERIFY_EMAIL: "Please verify your email before continuing",
+  INACTIVE_USER:
+    "User is inactive. If you have signed up recently please check your email for verification. Else, please contact the site admin.",
+  SUCCESS: "success",
+  NOT_ENOUGH_CREDITS: "You don't have enough credits",
+  RESEND_VERIFICATION_ERROR:
+    "Could not send resent link, Something went wrong!",
+  RESEND_VERIFICATION_LIMIT_ERROR:
+    "Could not send resent link, Limit exceeded!. Try again after 24 hours.",
+
+  NFT_USER_EXIST: "this wallet already exist in the database...",
+  NFT_USER_CREATED: "nft user created successfully...",
+  NFT_USER_DOESNT_CREATED: "nft user does not created successfully...",
+  NFT_USER_DOESNT_EXIST: "this user doesn't exist...",
+
+  STRIPE_CUSTOMER_NOT_CREATED: "Could not create a customer Stripe ID.",
+  STRIPE_CUSTOMER_NOT_FOUND: "Customer Stripe ID not found.",
+  STRIPE_PAYMENT_METHOD_NOT_CREATED:
+    "Could not create a payment method on Stripe.",
+  STRIPE_PAYMENT_METHOD_NOT_ATTACHED:
+    "Could not attach a payment method to customer on Stripe.",
+  STRIPE_CUSTOMER_PAYMENT_METHODS_NOT_FOUND:
+    "No payment methods found on Stripe.",
+  STRIPE_PAYMENT_INTENT_NOT_CREATED:
+    "Could not create a payment intent on Stripe.",
+  STRIPE_PAYMENT_INTENT_NOT_CONFIRMED:
+    "Payment intent could not be confirmed on Stripe.",
+    STRIPE_CARD_NOT_DELETED: "Stripe card not deleted"
+}
+
+export default responses
