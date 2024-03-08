@@ -29,23 +29,23 @@ app.use('/uploads', (express.static(path.join(__dirname, "uploads"))))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(passport.initialize())
 
-const whitelistedDomains: string[] = ['http://localhost:5173']
+// const whitelistedDomains: string[] = ['']
 
-const corsOptions: CorsOptions = {
-  credentials: true,
-  origin(requestOrigin, callback) {
-    if (!requestOrigin) return callback(null, true)
+// const corsOptions: CorsOptions = {
+//   credentials: true,
+//   origin(requestOrigin, callback) {
+//     if (!requestOrigin) return callback(null, true)
 
-    if (whitelistedDomains.indexOf(requestOrigin) === -1) {
-      var msg = `${origin} does not have access to this server.`
-      return callback(new Error(msg), false)
-    }
-    return callback(null, true)
-  },
-}
+//     if (whitelistedDomains.indexOf(requestOrigin) === -1) {
+//       var msg = `${origin} does not have access to this server.`
+//       return callback(new Error(msg), false)
+//     }
+//     return callback(null, true)
+//   },
+// }
 
 //implementing cors
-app.use(cors(corsOptions))
+// app.use(cors(corsOptions))
 app.use('/api', publicRoutes)
 app.use("/api", verifyUser, privateRoutes)
 app.use(handleErrors)
@@ -57,8 +57,8 @@ const initDB = async () => {
   try {
     await sequelize.authenticate()
     //Uncomment for resetting the DB in dev environment
-    await sequelize.sync({ force: true });
-    await sequelize.sync({ alter: true });
+    // await sequelize.sync({ force: true });
+    // await sequelize.sync({ alter: true });
     console.log("Database connection has been established successfully.")
   } catch (error) {
     console.error(`Unable to connect to database: ${error}`)

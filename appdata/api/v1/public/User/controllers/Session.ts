@@ -14,6 +14,7 @@ const login: RequestHandler = async (req, res, next) => {
     req.user!.password = undefined
     console.log("req.user after logging in => ", req.user)
     const jwtToken = getJwt({
+      //class_id:req.user!.class_id;
       id: req.user!.id,
       user_name: req.user!.user_name,
       user_type: req.user!.user_role_id
