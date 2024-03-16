@@ -34,7 +34,7 @@ export const mark = async (teacher_id:any, teacher_attendance: any, studentData:
             await AttendanceTeachers.create({date:d,
 teacher_id:teacher_id,subject_id:subject_id,attendance_id:teacher_attendance
             })
-            return {}
+            return "attendance marked";
     }
      catch (error) {
         throw error
