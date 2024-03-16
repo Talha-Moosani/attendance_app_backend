@@ -1,16 +1,17 @@
 import responses from "../../../../../../constants/Responses"
-import studentService from "../../../../../../services/student/Student"
+import attendanceService from "../../../../../../services/attendance/Attendance"
 import jwt from "jsonwebtoken"
 import { getJwt, COOKIE_OPTIONS } from "../../../../../..//utils/auth.utils"
 import { serverErrorResponse, successResponse, badRequestResponse, unauthorizedResponse, genericResponseByData } from "../../../../../../services/Response/Response"
 import { NextFunction, Request, Response } from "express"
 
-export const createStudent = async (req: Request, res: Response, next: NextFunction) => {
+export const mark = async (req: Request, res: Response, next: NextFunction) => {
+
     try {
-      console.log('Request recieved')
-      const studentDetails = req.body
+      console.log('Request recieved');
+      const{subject_id,teacher_id,teacher_attendance,studentData}=req.body;
       console.log(req.body)
-      const resp = await studentService.createStudent(studentDetails);
+      const resp = await attendanceService.mark(teacher_id,teacher_attendance,studentData,subject_id);
       console.log(resp)
       
 
@@ -25,6 +26,9 @@ export const createStudent = async (req: Request, res: Response, next: NextFunct
     }
   }
 
+  
+
+
 export default {
-    createStudent
+    mark
 }

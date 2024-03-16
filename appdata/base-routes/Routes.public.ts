@@ -19,6 +19,7 @@ import userRouter from "../api/v1/private/User/routes/User"
 import studentRoutes from "../api/v1/public/Student/routes/Student"
 import classRoutes from "../api/v1/public/Class/routes/Class"
 import subjectRoutes from "../api/v1/public/Subject/routes/Subject"
+import attendanceRoutes from "../api/v1/public/Attendance/routes/Attendance"
 const publicRouter = express.Router()
 publicRouter.use('/v1/session', userSessionRoutes)
 publicRouter.use('/v1/admin/auth', adminAuthRouter)
@@ -29,6 +30,9 @@ publicRouter.use('/v1/users/', userRouter)
 publicRouter.use('/v1/students', studentRoutes)
 publicRouter.use('/v1/classes', classRoutes)
 publicRouter.use('/v1/subjects', subjectRoutes)
+publicRouter.use('/v1/attendance', attendanceRoutes)
+
+
 // router.use("/v1/customer", customerRoutes)
 // router.use("/v1/customer/session", customerSessionRoutes)
 // router.use("/v1/product", productRoutes)

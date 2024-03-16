@@ -1,6 +1,6 @@
 import express from "express"
 import userSessionRoutes from "../api/v1/private/User/routes/Session"
-import studentRoutes from "../api/v1/private/Student/routes/Student"
+//import studentRoutes from "../api/v1/private/Student/routes/Student"
 // import complaintsRoutes from "../api/v1/private/Complaints/routes/Complaints"
 // import departmentRoutes from "../api/v1/private/Departments/routes/Departments"
 import userRouter from "../api/v1/private/User/routes/User"
