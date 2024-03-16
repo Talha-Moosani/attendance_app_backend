@@ -17,7 +17,9 @@ const login: RequestHandler = async (req, res, next) => {
       //class_id:req.user!.class_id;
       id: req.user!.id,
       user_name: req.user!.user_name,
-      user_type: req.user!.user_role_id
+      user_type: req.user!.user_role_id,
+      user_class_id: req.user!.class_id,
+      user_student_id:req.user!.student_id
     })
 
     const responseData = {
