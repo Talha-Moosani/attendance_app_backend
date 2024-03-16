@@ -14,8 +14,7 @@ import AttendanceType from "../../models/AttendanceType";
 
 //create 
 //name,student_id,subject_id,teacher_id,date
-export const mark = async (teacher_id: DataTypes.IntegerDataType, teacher_attendance: DataTypes.IntegerDataType, studentData: { student_id: typeof DataTypes.INTEGER, 
-    student_attendance: typeof DataTypes.INTEGER, }[], subject_id: DataTypes.IntegerDataType) => {
+export const mark = async (teacher_id:any, teacher_attendance: any, studentData: any, subject_id: any) => {
         console.log("in service marks");
     try {
         if (!Array.isArray(studentData)) {
@@ -28,13 +27,14 @@ export const mark = async (teacher_id: DataTypes.IntegerDataType, teacher_attend
             await AttendanceStudents.create({
                 date:d,
                 subject_id:subject_id,
-                student_id: studentData[i].student_id,
-                attendance_id: studentData[i].student_attendance
+                student_id: studentData[0].student_id,
+                attendance_id: studentData[1].student_attendance
             });}
             console.log("marking teachers");
             await AttendanceTeachers.create({date:d,
 teacher_id:teacher_id,subject_id:subject_id,attendance_id:teacher_attendance
             })
+            return "attendance marked";
     }
      catch (error) {
         throw error
