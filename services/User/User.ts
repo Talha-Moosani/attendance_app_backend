@@ -6,7 +6,7 @@ import UserType from "../../models/UserType"
 
 // Username can either be user_name or user_email attribute of the DB
 
-export const register = async (userInfo: { first_name: string, last_name: string, user_name: string, password: string, user_type_id: number, department_id: number}) => {
+export const register = async (userInfo: { first_name: string, last_name: string, user_name: string, password: string, user_type_id: number, class_id: number,student_id: number}) => {
     try {
       const admin = await User.create({
         user_name: userInfo.user_name.toLowerCase(),
@@ -14,7 +14,8 @@ export const register = async (userInfo: { first_name: string, last_name: string
         last_name: userInfo.last_name,
         password: userInfo.password,
         user_type_id: userInfo.user_type_id,
-        department_id: userInfo.department_id
+        class_id: userInfo.class_id,
+        student_id: userInfo.student_id
       })
       if (!admin) {
         return
