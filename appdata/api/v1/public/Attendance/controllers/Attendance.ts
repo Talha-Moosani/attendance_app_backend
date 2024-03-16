@@ -25,10 +25,71 @@ export const mark = async (req: Request, res: Response, next: NextFunction) => {
       next(error)
     }
   }
+  export const getWithinDatesT = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{startDate,endDate}=req.body;
+      console.log(req.body)
+      const resp = await attendanceService.getWithinDatesT(startDate,endDate);
+      console.log(resp)
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+  export const getWithinDatesS= async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{startDate,endDate}=req.body;
+      console.log(req.body)
+      const resp = await attendanceService.getWithinDatesS(startDate,endDate);
+      console.log(resp)
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+
+  export const getBySidnDate= async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{subject_id,date}=req.body;
+      console.log(req.body)
+      const resp = await attendanceService.getBySidnDate(date,subject_id);
+      console.log(resp)
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
 
   
 
 
 export default {
-    mark
+    mark,getWithinDatesS,getWithinDatesT,getBySidnDate
 }
