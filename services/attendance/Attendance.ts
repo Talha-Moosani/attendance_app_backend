@@ -109,27 +109,30 @@ teacher_id:teacher_id,subject_id:subject_id,attendance_id:teacher_attendance
 }
 };
 
-//get attendance by subject id and date
-export const getBySidnDate = async (date:any, subject_id: any) => {
-  
-try {
-  const studentsNteachers=await AttendanceStudents.findAll({
-    where:{
-    subject_id:subject_id,
-    date:{
-      [Op.eq]:date
-    }
-  }, include:[{
-    model:AttendanceTeachers,required:true
-  }]
-})
+//get attendance by class id and date
+export const getBySidnDate = async (date:any, class_id: any) => {
+  let cd=new Date(date);
+  console.log("in attendance service ", date," class id is: ",class_id)
 
-return studentsNteachers;
+  try {
+    const attendanceRecords = await AttendanceStudents.findAll({
+      include: [{
+        model: Subject,
+        where: { class_id:class_id  }
+      }],
+      where: {
+        date: {
+          [Op.eq]: cd // Assuming 'date' is the column name in the AttendanceStudents table
+        }
+      }
+    });
+    return attendanceRecords;
+  } catch (error) {
+    console.error("Error retrieving attendance:", error);
+    throw error;
+  }
 }
-catch (error) {
-  throw error
-}
-};
+
 // const teachers=await AttendanceTeachers.findAll({where:{
 //   subject_id:subject_id,
 //   date:{

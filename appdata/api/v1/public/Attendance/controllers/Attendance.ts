@@ -70,9 +70,9 @@ export const mark = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       console.log('Request recieved');
-      const{subject_id,date}=req.body;
+      const{class_id,date}=req.body;
       console.log(req.body)
-      const resp = await attendanceService.getBySidnDate(date,subject_id);
+      const resp = await attendanceService.getBySidnDate(date,class_id);
       console.log(resp)
       
 
