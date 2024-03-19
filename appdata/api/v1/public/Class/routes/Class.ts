@@ -5,8 +5,8 @@ const classRouter = Router();
 
 classRouter.post("/createClass", classController.createClass)
 
- classRouter.put("/updateClassName", classController.updateClassName)
-classRouter.delete("/deleteClass", classController.deleteClass)
+ classRouter.post("/updateClassName", classController.updateClassName)
+classRouter.post("/deleteClass", classController.deleteClass)
  classRouter.post("/viewClass", classController.viewClass)
 //classRouter.post("/getAttendance", classController.createStudent)
 
