@@ -4,9 +4,9 @@ import attendanceController from "../controllers/Attendance"
 const attendanceRouter = Router();
 
 attendanceRouter.post("/mark", attendanceController.mark)
-attendanceRouter.get("/getWithinDatesS",attendanceController.getWithinDatesS)
-attendanceRouter.get("/getWithinDatesT",attendanceController.getWithinDatesT)
-attendanceRouter.get("/getBySidnDate",attendanceController.getBySidnDate)
+attendanceRouter.post("/getWithinDatesS",attendanceController.getWithinDatesS)
+attendanceRouter.post("/getWithinDatesT",attendanceController.getWithinDatesT)
+attendanceRouter.post("/getBySidnDate",attendanceController.getBySidnDate)
 
 // attendanceRouter.post("/update", attendanceController.update)
 // attendanceRouter.post("/delete", attendanceController.delete)

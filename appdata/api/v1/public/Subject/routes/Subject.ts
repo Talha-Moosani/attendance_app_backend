@@ -3,7 +3,7 @@ import subjectController from "../controllers/Subject"
 
 const subjectRouter = Router();
 
-subjectRouter.get("/viewByCid", subjectController.getSubjectsByCid)
+subjectRouter.post("/viewByCid", subjectController.getSubjectsByCid)
 
 // subjectRouter.post("/update", subjectController.createStudent)
 // subjectRouter.post("/delete", subjectController.createStudent)
