@@ -72,9 +72,9 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
 
     try {
       console.log('Request recieved');
-      const{cid}=req.body;
+      const{cid,year}=req.body;
       console.log(req.body)
-      const resp = await teacherService.viewByCid(cid);
+      const resp = await teacherService.viewByCid(cid,year);
       console.log(resp)
       
 

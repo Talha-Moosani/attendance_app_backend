@@ -14,40 +14,36 @@ import teacherService from "../teacher/Teacher";
 export const getSubjectsByCid = async (cid:any) => {
  let data = [];
  
- let teacherNames:any
+ let teacherName:any
+ 
     try {
       console.log("cid: ",cid)
-
-   let teacherIDS:any  =await teacherService.viewByCid(cid);
+//manually year is passed
+   let teacherIDS:any  =await teacherService.viewByCid(cid,2024);
 
 for (const teacherIDObj of teacherIDS) {
 
-    const teacherName = await Teacher.findOne({
+     teacherName = await Teacher.findOne({
         attributes: ['name'],
         where: {
             id: teacherIDObj.teacher_id
         }
     });
-    let name=teacherName?.toJSON
-    
-    if (teacherName) {
+    let subject:any
+    subject=await Subject.findOne({
+        attributes:['name'],
+        where:{
+            id:teacherIDObj.subject_id
+        }
+      });
         data.push({
           teacher_id:teacherIDObj.teacher_id,
-        //   teacher_name:name,
-        
-          subject:teacherIDObj.subject_id
+        name:teacherName.name,
+          subject:teacherIDObj.subject_id,
+        subject_name:subject.name
         })
-    } else {
-        // Handle the case where teacher with given ID is not found
-        teacherNames.push(null); // Or any placeholder value you prefer
-    }
+     
 }
-
-// // Now teacherNames array will contain names corresponding to each teacher_id in teacherIDs
-
-//         const subjects=await Subject.findAll({
-//             where:{class_id:cid}
-//         });return subjects
    
 return data;
     }

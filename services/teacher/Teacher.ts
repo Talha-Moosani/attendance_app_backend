@@ -45,10 +45,11 @@ catch(error)
   }
 }; 
 
-export const viewByCid=async (cid:any)=>{
+export const viewByCid=async (cid:any,year:any)=>{
   try{
     //Add year in where
       const teachers=await Teaching.findAll({where:{
+        year:year,
         class_id:cid
       }});
       return teachers;
