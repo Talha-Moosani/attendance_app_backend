@@ -48,11 +48,18 @@ try {
   // let ced=new Date(endDate);
   // console.log("dates converetd");
  const attendanceWithindates= await AttendanceStudents.findAll({
-  where:{
-  date:{
-    [Op.between]:[startDate,endDate],
-  }
- }
+  where:[
+    sequelize.where(
+      sequelize.col('date'),
+      Op.gte,
+      sequelize.fn('STR_TO_DATE',startDate+' 00:00','%Y-%m-%d %H:%i')
+    ),
+    sequelize.where(
+      sequelize.col('date'),
+      Op.lte,
+      sequelize.fn('STR_TO_DATE',endDate+' 23:59','%Y-%m-%d %H:%i')
+    )
+]
 }
 )     
 return attendanceWithindates;
@@ -67,15 +74,23 @@ export const getWithinDatesT = async (startDate:any,endDate:any) => {
 
   try {
     
-   const attendanceWithindates= await AttendanceTeachers.findAll({
-    where:{
-    date:{
-      [Op.between]:[startDate,endDate],
-    },
-   }
-  }
-  )     
-  return attendanceWithindates;}
+    const attendanceWithindates= await AttendanceTeachers.findAll({
+      where:[
+        sequelize.where(
+          sequelize.col('date'),
+          Op.gte,
+          sequelize.fn('STR_TO_DATE',startDate+' 00:00','%Y-%m-%d %H:%i')
+        ),
+        sequelize.where(
+          sequelize.col('date'),
+          Op.lte,
+          sequelize.fn('STR_TO_DATE',endDate+' 23:59','%Y-%m-%d %H:%i')
+        )
+    ]
+    }
+    )       
+  return attendanceWithindates;
+}
   catch (error) {
     throw error
   }

@@ -7,22 +7,51 @@ import fs from 'fs'
 import path from "path";
 import Classes from "../../models/Classes";
 import Subject from "../../models/Subject";
+import Teaching from "../../models/Teaching";
+import Teacher from "../../models/Teacher";
+import teacherService from "../teacher/Teacher";
 //create 
 export const getSubjectsByCid = async (cid:any) => {
+ let data = [];
+ 
+ let teacherNames:any
     try {
-        const subjects=await Subject.findAll({
-            where:{class_id:cid}
-        });return subjects
-    //   let classes: any
-    //   const { name } = classDetails
-      
-    //       classes = await Classes.create({
-    //         name : name
-    //       })
-      
-    //       // const classs = classes.findAll({where:{name:'Ali Iqbal'}});
-    //   return classes
-    } catch (error) {
+      console.log("cid: ",cid)
+
+   let teacherIDS:any  =await teacherService.viewByCid(cid);
+    console.log("first teacher id: ",teacherIDS[0].teacher_id," his subject: ",teacherIDS[0].subject_id)
+
+for (const teacherIDObj of teacherIDS) {
+
+    const teacherName = await Teacher.findOne({
+        attributes: ['name'],
+        where: {
+            id: teacherIDObj.teacher_id
+        }
+    });
+    
+    if (teacherName) {
+        data.push({
+          teacher_id:teacherIDObj.teacher_id,
+          ,
+          subject:teacherIDObj.subject_id
+        })
+    } else {
+        // Handle the case where teacher with given ID is not found
+        teacherNames.push(null); // Or any placeholder value you prefer
+    }
+}
+
+// // Now teacherNames array will contain names corresponding to each teacher_id in teacherIDs
+
+//         const subjects=await Subject.findAll({
+//             where:{class_id:cid}
+//         });return subjects
+   
+return data;
+    }
+    
+     catch (error) {
       throw error
     }
   };
