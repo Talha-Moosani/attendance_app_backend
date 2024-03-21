@@ -19,7 +19,6 @@ export const getSubjectsByCid = async (cid:any) => {
       console.log("cid: ",cid)
 
    let teacherIDS:any  =await teacherService.viewByCid(cid);
-    console.log("first teacher id: ",teacherIDS[0].teacher_id," his subject: ",teacherIDS[0].subject_id)
 
 for (const teacherIDObj of teacherIDS) {
 
@@ -29,11 +28,13 @@ for (const teacherIDObj of teacherIDS) {
             id: teacherIDObj.teacher_id
         }
     });
+    let name=teacherName?.toJSON
     
     if (teacherName) {
         data.push({
           teacher_id:teacherIDObj.teacher_id,
-          ,
+        //   teacher_name:name,
+        
           subject:teacherIDObj.subject_id
         })
     } else {
