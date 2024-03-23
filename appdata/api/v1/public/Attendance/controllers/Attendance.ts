@@ -9,9 +9,9 @@ export const mark = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       console.log('Request recieved');
-      const{subject_id,teacher_id,teacher_attendance,studentData}=req.body;
+      const{class_id,subject_id,teacher_id,teacher_attendance,studentData}=req.body;
       console.log(req.body)
-      const resp = await attendanceService.mark(teacher_id,teacher_attendance,studentData,subject_id);
+      const resp = await attendanceService.mark(class_id,teacher_id,teacher_attendance,studentData,subject_id);
       console.log(resp)
       
 

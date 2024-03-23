@@ -9,6 +9,7 @@ import Student from "../../models/Student";
 import Studying from "../../models/Studying";
 import classService from "../class/Class";
 import Class from "../../models/Classes";
+import AttendanceStudents from "../../models/AttendanceStudent";
 //create 
 export const createStudent = async (sname:any) => {
     try {
@@ -67,7 +68,7 @@ try {
 
   const studentsByClassId = await Class.findAll({
     where:{id:cid},
-   attributes:['name'],
+   attributes:[['name','class_name']],
    
     include: [
         {
@@ -75,9 +76,19 @@ try {
             required: true,
             attributes:['class_id','student_id','year'],
             include: [
-                {attributes:['name'],
+                {
+                  attributes:[['name','student_name']],
                     model: Student,
                     required: true,
+                    include:[
+                     { model: AttendanceStudents,
+                      required:true,
+                      where:{
+                        id:"student_id"
+                      },
+                        attributes:[['attendance_id','student_attendance']]
+                     }
+                    ]
                 }
             ]
         }
