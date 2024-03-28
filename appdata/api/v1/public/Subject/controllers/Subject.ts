@@ -5,8 +5,9 @@ import { getJwt, COOKIE_OPTIONS } from "../../../../../..//utils/auth.utils"
 import { serverErrorResponse, successResponse, badRequestResponse, unauthorizedResponse, genericResponseByData } from "../../../../../../services/Response/Response"
 import { NextFunction, Request, Response } from "express"
 import subjectService from "../../../../../../services/subject/Subject"
+import exp from "constants"
 
-export const getSubjectsByCid = async (req: Request, res: Response, next: NextFunction) => {
+export const getAssigned = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       let resp:any
@@ -14,10 +15,10 @@ export const getSubjectsByCid = async (req: Request, res: Response, next: NextFu
       const{cid,year}=req.body;
       console.log(req.body)
       if (year==null){
-       resp = await subjectService.getSubjectsByCid(cid,1);
+       resp = await subjectService.getAssigned(cid,1);
       console.log(resp)
     }else{
-       resp = await subjectService.getSubjectsByCid(cid,year);
+       resp = await subjectService.getAssigned(cid,year);
       console.log(resp)
     }
     
@@ -42,11 +43,52 @@ export const getSubjectsByCid = async (req: Request, res: Response, next: NextFu
       console.log(req.body)
       const resp = await subjectService.create(name,cid,period);
       console.log(resp)
-      
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
 
-    //   console.log("refreshToken => " + token)
+      next(error)
+    }
+  }
+
+  export const getAll = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
   
-    //   res.clearCookie("token", COOKIE_OPTIONS)
+      console.log(req.body)
+      const resp = await subjectService.getAll();
+      console.log(resp)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+  export const getUnassigned = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{cid}=req.body;
+      console.log(req.body)
+      const resp = await subjectService.getUnassigned(cid);
+      console.log(resp)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+  export const getByCid = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{cid}=req.body;
+      console.log(req.body)
+      const resp = await subjectService.getByCid(cid);
+      console.log(resp)
       return res.send(genericResponseByData(resp,{'success':true}))
     } catch (error) {
       console.log(error)
@@ -57,5 +99,5 @@ export const getSubjectsByCid = async (req: Request, res: Response, next: NextFu
 
 
 export default {
-    getSubjectsByCid,create
+    getAssigned,create,getAll,getUnassigned,getByCid
 }

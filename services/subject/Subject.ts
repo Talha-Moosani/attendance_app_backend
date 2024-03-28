@@ -12,7 +12,7 @@ import Teacher from "../../models/Teacher";
 import teacherService from "../teacher/Teacher";
 import { error } from "console";
 //create 
-export const getSubjectsByCid = async (cid:any,year:any) => {
+export const getAssigned = async (cid:any,year:any) => {
  
     try {
       const c=cid;
@@ -47,17 +47,50 @@ WHERE subjects.class_id =:c AND teachings.year=:y
     }
   };
   
-//   export const getAll=async()=>
-//   {
-//     try{
-// const subjects =await Subject.findAll(
+  export const getAll=async()=>
+  {
+    try{
+const subjects =await Subject.findAll(
   
-// );
-// return subjects
-//     } catch{
-//       throw error
-//     }
-//   }
+);
+return subjects
+    } catch{
+      throw error
+    }
+  }
+
+  export const getUnassigned=async(cid:any)=>
+  {
+    try{
+let c=cid;
+const query=`SELECT subjects.id AS subject_id, subjects.name AS subject_name, subjects.period
+FROM subjects
+LEFT JOIN teachings ON subjects.id = teachings.subject_id AND teachings.year = YEAR(CURRENT_DATE)
+WHERE subjects.class_id =:c
+AND teachings.subject_id IS NULL;`
+const [results,metadata]=await sequelize.query(query,{
+  replacements:{c}
+}) 
+if(results.length==0){
+  return "all subjects assigned"
+}
+return results;
+    } catch{
+      throw error
+    }
+  }
+
+  export const getByCid=async(cid:any)=>
+  {
+    try{
+const subjects =await Subject.findAll(
+  {where:{class_id:cid}}
+);
+return subjects
+    } catch{
+      throw error
+    }
+  }
 
   export const create=async(name:any, class_id:any,period:any)=>
 {
@@ -78,9 +111,11 @@ return subject
     }
   }
   const subjectService = {
-    getSubjectsByCid, create
-    //, getAll
-    //, getUnassigned
+    create, 
+    getByCid,
+    getAll,
+    getUnassigned,
+    getAssigned
 }
 
 export default subjectService
