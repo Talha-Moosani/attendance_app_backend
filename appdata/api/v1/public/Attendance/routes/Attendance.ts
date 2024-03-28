@@ -6,7 +6,10 @@ const attendanceRouter = Router();
 attendanceRouter.post("/mark", attendanceController.mark)
 attendanceRouter.post("/getWithinDatesS",attendanceController.getWithinDatesS)
 attendanceRouter.post("/getWithinDatesT",attendanceController.getWithinDatesT)
-attendanceRouter.post("/getBySidnDate",attendanceController.getBySidnDate)
+attendanceRouter.post("/getByCidnDate",attendanceController.getByCidnDate)
+attendanceRouter.post("/getByCid",attendanceController.getByCid)
+attendanceRouter.post("/verifyByCid",attendanceController.verifyByCid)
+
 
 // attendanceRouter.post("/update", attendanceController.update)
 // attendanceRouter.post("/delete", attendanceController.delete)

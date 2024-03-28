@@ -61,6 +61,12 @@ const AttendanceStudents = sequelize.define(
       allowNull: false,
       defaultValue: Sequelize.fn('now'),
     },
+    period:{
+      field:"period",
+      type: DataTypes.INTEGER,
+      allowNull:true,
+      defaultValue:null
+    }
   },
   {
     underscored: true,
@@ -69,6 +75,6 @@ const AttendanceStudents = sequelize.define(
   }
 )
 
-// AttendanceStudents.sync({alter: true})
+//AttendanceStudents.sync({alter: true})
 
 export default AttendanceStudents

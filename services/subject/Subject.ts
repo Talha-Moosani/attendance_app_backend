@@ -10,42 +10,36 @@ import Subject from "../../models/Subject";
 import Teaching from "../../models/Teaching";
 import Teacher from "../../models/Teacher";
 import teacherService from "../teacher/Teacher";
+import { error } from "console";
 //create 
-export const getSubjectsByCid = async (cid:any) => {
- let data = [];
- 
- let teacherName:any
+export const getSubjectsByCid = async (cid:any,year:any) => {
  
     try {
-      console.log("cid: ",cid)
-//manually year is passed
-   let teacherIDS:any  =await teacherService.viewByCid(cid,2024);
-
-for (const teacherIDObj of teacherIDS) {
-
-     teacherName = await Teacher.findOne({
-        attributes: ['name'],
-        where: {
-            id: teacherIDObj.teacher_id
+      const c=cid;
+      const y=year;
+      let query:any
+      if(year==1){
+      query=` SELECT teachers.id AS teacher_id, teachers.name AS teacher_name, subjects.id AS subjects_id, subjects.name AS subject_name, subjects.period
+      FROM subjects
+      LEFT JOIN teachings ON subjects.id = teachings.subject_id
+      LEFT JOIN teachers ON teachings.teacher_id = teachers.id
+      WHERE subjects.class_id =:c AND teachings.year = YEAR(CURRENT_DATE)
+       `}
+       else{
+query=` SELECT teachers.id AS teacher_id, teachers.name AS teacher_name, subjects.id AS subjects_id, subjects.name AS subject_name, subjects.period
+FROM subjects
+LEFT JOIN teachings ON subjects.id = teachings.subject_id
+LEFT JOIN teachers ON teachings.teacher_id = teachers.id
+WHERE subjects.class_id =:c AND teachings.year=:y
+ `
+       }
+      const[results,metadata]=await sequelize.query(query,{
+        replacements:{
+          c,y
         }
-    });
-    let subject:any
-    subject=await Subject.findOne({
-        attributes:['name'],
-        where:{
-            id:teacherIDObj.subject_id
-        }
-      });
-        data.push({
-          teacher_id:teacherIDObj.teacher_id,
-        name:teacherName.name,
-          subject:teacherIDObj.subject_id,
-        subject_name:subject.name
-        })
-     
-}
-   
-return data;
+      })
+      return results;
+
     }
     
      catch (error) {
@@ -53,8 +47,40 @@ return data;
     }
   };
   
+//   export const getAll=async()=>
+//   {
+//     try{
+// const subjects =await Subject.findAll(
+  
+// );
+// return subjects
+//     } catch{
+//       throw error
+//     }
+//   }
+
+  export const create=async(name:any, class_id:any,period:any)=>
+{
+  
+    try{
+      console.log("in create")
+const subject =await Subject.create(
+  {
+    name:name,
+    class_id:class_id,
+    period:period
+  }
+
+);
+return subject
+    } catch{
+      throw error
+    }
+  }
   const subjectService = {
-    getSubjectsByCid
+    getSubjectsByCid, create
+    //, getAll
+    //, getUnassigned
 }
 
 export default subjectService

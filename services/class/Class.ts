@@ -48,6 +48,16 @@ const view=await Classes.findOne(
         console.log("no record found matching this name");
     }
 };
+export const viewAll = async (message:any) => {
+  try {
+const view=await Classes.findAll(
+  ); return view
+      
+  } catch (error) {
+      throw error;
+      
+  }
+};
   //delete
   export const deleteClass = async (name: any) => {
     try {
@@ -65,7 +75,7 @@ const deleteC=await Classes.destroy(
 };
   const classService = {
     createClass,
-    updateClassName,viewClass,deleteClass
+    updateClassName,viewClass,deleteClass,viewAll
 }
 
 export default classService

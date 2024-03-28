@@ -9,10 +9,38 @@ import subjectService from "../../../../../../services/subject/Subject"
 export const getSubjectsByCid = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
+      let resp:any
       console.log('Request recieved');
-      const{cid}=req.body;
+      const{cid,year}=req.body;
       console.log(req.body)
-      const resp = await subjectService.getSubjectsByCid(cid);
+      if (year==null){
+       resp = await subjectService.getSubjectsByCid(cid,1);
+      console.log(resp)
+    }else{
+       resp = await subjectService.getSubjectsByCid(cid,year);
+      console.log(resp)
+    }
+    
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+
+  export const create = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{name,cid,period}=req.body;
+      console.log(req.body)
+      const resp = await subjectService.create(name,cid,period);
       console.log(resp)
       
 
@@ -27,6 +55,7 @@ export const getSubjectsByCid = async (req: Request, res: Response, next: NextFu
     }
   }
 
+
 export default {
-    getSubjectsByCid
+    getSubjectsByCid,create
 }

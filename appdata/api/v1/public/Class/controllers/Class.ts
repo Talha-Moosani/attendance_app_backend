@@ -92,8 +92,29 @@ export const createClass = async (req: Request, res: Response, next: NextFunctio
     }
   }
 
+  export const viewAll = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log('Request recieved')
+      //const classDetails = req.body
+
+      
+    
+      const resp = await classService.viewAll("all classes");
+      console.log(resp)
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
 
 export default {
-    createClass,updateClassName,viewClass,deleteClass
+    createClass,updateClassName,viewClass,deleteClass,viewAll
 
 }

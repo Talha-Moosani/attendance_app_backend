@@ -9,9 +9,9 @@ export const mark = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       console.log('Request recieved');
-      const{class_id,subject_id,teacher_id,teacher_attendance,studentData}=req.body;
+      const{subject_id,teacher_id,teacher_attendance,studentData,period}=req.body;
       console.log(req.body)
-      const resp = await attendanceService.mark(class_id,teacher_id,teacher_attendance,studentData,subject_id);
+      const resp = await attendanceService.mark(teacher_id,teacher_attendance,studentData,subject_id,period);
       console.log(resp)
       
 
@@ -53,11 +53,7 @@ export const mark = async (req: Request, res: Response, next: NextFunction) => {
       console.log(req.body)
       const resp = await attendanceService.getWithinDatesS(startDate,endDate);
       console.log(resp)
-      
 
-    //   console.log("refreshToken => " + token)
-  
-    //   res.clearCookie("token", COOKIE_OPTIONS)
       return res.send(genericResponseByData(resp,{'success':true}))
     } catch (error) {
       console.log(error)
@@ -66,7 +62,24 @@ export const mark = async (req: Request, res: Response, next: NextFunction) => {
     }
   }
 
-  export const getBySidnDate= async (req: Request, res: Response, next: NextFunction) => {
+  export const verifyByCid= async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{cid}=req.body;
+      console.log(req.body)
+      const resp = await attendanceService.verifyByCid(cid);
+      console.log(resp)
+
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+
+  export const getByCidnDate= async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       console.log('Request recieved');
@@ -87,9 +100,30 @@ export const mark = async (req: Request, res: Response, next: NextFunction) => {
     }
   }
 
+  export const getByCid= async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{cid}=req.body;
+      console.log(req.body)
+      const resp = await attendanceService.getByCid(cid);
+      console.log(resp)
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+
   
 
 
 export default {
-    mark,getWithinDatesS,getWithinDatesT,getBySidnDate
+    mark,getWithinDatesS,getWithinDatesT,getByCidnDate,getByCid,verifyByCid
 }

@@ -1,4 +1,4 @@
-import { Op, Sequelize } from "sequelize";
+import { Op, Sequelize, where } from "sequelize";
 import sequelize from "../../config/db.config"
 import responses from "../../constants/Responses"
 import User from '../../models/User'
@@ -10,6 +10,7 @@ import Studying from "../../models/Studying";
 import classService from "../class/Class";
 import Class from "../../models/Classes";
 import AttendanceStudents from "../../models/AttendanceStudent";
+import { error } from "console";
 //create 
 export const createStudent = async (sname:any) => {
     try {
@@ -60,41 +61,19 @@ ss=Studying.create({student_id:Number(sid.id),class_id:Number(cid.id),year:Numbe
     }
   };
 //by class
-  export const viewStudentsByClassId = async (cid:any) => {
-   
-      
-
-try {
-
-  const studentsByClassId = await Class.findAll({
-    where:{id:cid},
-   attributes:[['name','class_name']],
-   
-    include: [
-        {
-            model: Studying,
-            required: true,
-            attributes:['class_id','student_id','year'],
-            include: [
-                {
-                  attributes:[['name','student_name']],
-                    model: Student,
-                    required: true,
-                    include:[
-                     { model: AttendanceStudents,
-                      required:true,
-                      where:{
-                        id:"student_id"
-                      },
-                        attributes:[['attendance_id','student_attendance']]
-                     }
-                    ]
-                }
-            ]
-        }
-    ]
-}); return studentsByClassId
-    } catch (error) {
+  export const getByCid = async (cid:any) => {
+   let clID=cid
+    try{
+      const query=` select students.id,students.name,studyings.year,classes.id as class_id,classes.name as class_name 
+      from students
+      left join studyings on students.id=studyings.student_id
+       left join classes on studyings.class_id=classes.id
+       where classes.id=:clID;`
+       const[results,metadata]=await sequelize.query(query,{
+        replacements:{clID}
+       })
+       return results;
+    }catch{
       throw error
     }
   };
@@ -113,10 +92,49 @@ try {
       throw error
     }
   };
+export const getAll=async()=>{
+  try {
+    const query = `
+    select distinct students.id,students.name,studyings.year,classes.id as class_id,classes.name as class_name 
+    from students
+    left join studyings on students.id=studyings.student_id
+     left join classes on studyings.class_id=classes.id;
+`;
 
+const [results, metadata] = await sequelize.query(query);
+    
+    
+    return results;
+
+  }catch(error){
+    throw error
+  }
+}
+
+export const updateDetails=async(sid:any,cid:any,year:any)=>{
+  console.log("in update details")
+  try {
+    const student=await Studying.findOne({
+      where:{
+student_id:sid
+    }
+  })
+  
+  const students=await student?.update({
+    class_id:cid,
+    year:year
+  })
+  
+
+return students;
+
+  }catch(error){
+    throw error
+  }
+}
   //delete
   const studentService = {
-    createSS,viewStudentsByClassId,viewStudentByName,viewStudentsByYearCreated
+    createSS,viewStudentByName,viewStudentsByYearCreated,getAll,getByCid,updateDetails
 }
 
 export default studentService

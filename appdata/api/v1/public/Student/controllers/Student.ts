@@ -26,13 +26,15 @@ export const createStudent = async (req: Request, res: Response, next: NextFunct
     }
   }
 
-  export const viewStudentsByClassId = async (req: Request, res: Response, next: NextFunction) => {
+
+
+  export const getAll = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       console.log('Request recieved');
-      const{cid}=req.body;
+      
       console.log(req.body)
-      const resp = await studentService.viewStudentsByClassId(cid);
+      const resp = await studentService.getAll();
       console.log(resp)
       
 
@@ -47,7 +49,48 @@ export const createStudent = async (req: Request, res: Response, next: NextFunct
     }
   }
 
+  export const getByCid = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{cid}=req.body
+      console.log(req.body)
+      const resp = await studentService.getByCid(cid);
+      console.log(resp)
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+
+  export const updateDetails = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{sid,cid,year}=req.body
+      console.log(req.body)
+      const resp = await studentService.updateDetails(sid,cid,year);
+      console.log(resp)
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
 
 export default {
-    createStudent,viewStudentsByClassId
+    createStudent,getAll,getByCid,updateDetails
 }
