@@ -9,6 +9,7 @@ classRouter.post("/createClass", classController.createClass)
 classRouter.post("/deleteClass", classController.deleteClass)
  classRouter.post("/viewClass", classController.viewClass)
  classRouter.post("/viewAll", classController.viewAll)
+ classRouter.post("/get",classController.getClass)
 
  //classRouter.post("/getAttendance", classController.createStudent)
 

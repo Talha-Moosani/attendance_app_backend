@@ -7,6 +7,7 @@ teacherRouter.post("/create", teacherController.create)
 teacherRouter.post("/assignSubject",teacherController.assignSubject)
 teacherRouter.post("/viewAll",teacherController.viewAll)
 teacherRouter.post("/viewByCid",teacherController.viewByCid)
+teacherRouter.post("/get",teacherController.getTeaching)
 
 // teacherRouter.post("/update", teacherController.update)
 // teacherRouter.post("/delete", teacherController.delete)

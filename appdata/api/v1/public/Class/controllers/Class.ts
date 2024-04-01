@@ -113,8 +113,22 @@ export const createClass = async (req: Request, res: Response, next: NextFunctio
       next(error)
     }
   }
+  export const getClass = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log('Request recieved')
+const {cid}=req.body
+      const resp = await classService.getClass(cid);
+      console.log(resp)
+     
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
 
 export default {
-    createClass,updateClassName,viewClass,deleteClass,viewAll
+    createClass,updateClassName,viewClass,deleteClass,viewAll, getClass
 
 }

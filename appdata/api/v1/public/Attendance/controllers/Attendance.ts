@@ -120,10 +120,30 @@ export const mark = async (req: Request, res: Response, next: NextFunction) => {
       next(error)
     }
   }
+  export const getReport= async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{class_id,student_id,teacher_id,subject_id}=req.body;
+      console.log(req.body)
+      const resp = await attendanceService.getReport(student_id,class_id,teacher_id,subject_id);
+      console.log(resp)
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
 
   
 
 
 export default {
-    mark,getWithinDatesS,getWithinDatesT,getByCidnDate,getByCid,verifyByCid
+    mark,getWithinDatesS,getWithinDatesT,getByCidnDate,getByCid,verifyByCid,getReport
 }

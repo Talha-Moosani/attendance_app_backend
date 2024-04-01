@@ -9,6 +9,7 @@ attendanceRouter.post("/getWithinDatesT",attendanceController.getWithinDatesT)
 attendanceRouter.post("/getByCidnDate",attendanceController.getByCidnDate)
 attendanceRouter.post("/getByCid",attendanceController.getByCid)
 attendanceRouter.post("/verifyByCid",attendanceController.verifyByCid)
+attendanceRouter.post("/getReport",attendanceController.getReport)
 
 
 // attendanceRouter.post("/update", attendanceController.update)

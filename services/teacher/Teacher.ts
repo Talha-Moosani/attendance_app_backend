@@ -11,6 +11,7 @@ import Teacher from "../../models/Teacher";
 import Teaching from "../../models/Teaching";
 import { error } from "console";
 import Class from "../../models/Classes";
+import subjectService from "../subject/Subject";
 //create 
 export const create = async (name: any) => {
 
@@ -84,8 +85,28 @@ export const viewByCid = async (cid: any, year: any) => {
   }
 };
 
+export const getTeacher=async(id:any)=>{
+  
+  return await Teacher.findByPk(id);
+}
+export const getTeaching=async(teacher_id:any)=>{
+ let teaching=await Teaching.findOne({
+  where:{
+    teacher_id:teacher_id,
+    year: new Date().getFullYear()
+  }
+})
+  
+  return {
+    id: teacher_id,
+    name: (await getTeacher(teacher_id))?.dataValues.name,
+    class_id: teaching?.dataValues.class_id,
+    subject_id: teaching?.dataValues.subject_id,
+    period: (await subjectService.getSubject(teaching?.dataValues.subject_id))?.dataValues.period
+};
+}
 const teacherService = {
-  create, assignSubject, viewAll, viewByCid
+  create, assignSubject, viewAll, viewByCid,getTeaching
 }
 
 export default teacherService

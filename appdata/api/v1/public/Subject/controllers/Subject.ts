@@ -97,7 +97,40 @@ export const getAssigned = async (req: Request, res: Response, next: NextFunctio
     }
   }
 
+  export const assign = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{subject_id,class_id,teacher_id,year}=req.body;
+      console.log(req.body)
+      const resp = await subjectService.assign(subject_id,class_id,teacher_id,year);
+      console.log(resp)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+  export const updateDetails = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{subject_id,newName,newPeriod,newTeacher}=req.body;
+      console.log(req.body)
+      const resp = await subjectService.updateDetails(subject_id,newName,newPeriod,newTeacher);
+      console.log(resp)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+
+
+
 
 export default {
-    getAssigned,create,getAll,getUnassigned,getByCid
+    getAssigned,create,getAll,getUnassigned,getByCid,assign,updateDetails
 }

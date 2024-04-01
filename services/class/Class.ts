@@ -73,9 +73,19 @@ const deleteC=await Classes.destroy(
         console.log("no record found matching this name");
     }
 };
+export const getClass=async(cid:any)=>{
+  if(cid==null){return "null"}
+//console.log("in get class",(await Classes.findByPk(cid))?.dataValues.name )
+  return {
+    id:cid,
+    name: (await Classes.findByPk(cid))?.dataValues.name
+  }
+  
+}
   const classService = {
     createClass,
-    updateClassName,viewClass,deleteClass,viewAll
+    updateClassName,viewClass,deleteClass,viewAll,
+    getClass
 }
 
 export default classService

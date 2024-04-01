@@ -15,6 +15,10 @@ import studentService from "../student/Student";
 import { error } from "console";
 import Class from "../../models/Classes";
 import Studying from "../../models/Studying";
+import exp from "constants";
+import teacherService from "../teacher/Teacher";
+import subjectService from "../subject/Subject";
+import classService from "../class/Class";
 
 //create 
 //name,student_id,subject_id,teacher_id,date
@@ -341,114 +345,154 @@ return data;
     throw error
   }
 }
-// takes subject id, student id, attendance type as input where type would be by default from the start of year till today and incase
-// a input is provided then go for monthly 
 
-export const getStDateS=async(student_id:any)=>{
-  // student id has values date,period,subjectid,classid is null
-
-  try{
-let data=[]
-const query=` select  attendance_students.period,
-SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
+export const getStudentReport=async(student:any)=>{
+  try {
+    
+    if(student==null){
+      return "null"
+    }else{
+   let s= await studentService.getStudent(student)
+   let data=[]
+    let sid=student
+    let query1=`SELECT 
+    period,
+    SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
+    SUM(CASE WHEN attendance_students.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
+    SUM(CASE WHEN attendance_students.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
+    FROM 
+    attendance_students
+    WHERE 
+    attendance_students.student_id =:sid
+    AND DATE(date) <= CURDATE() and year(date)=year(curdate()) -- Filter dates until the current date
+    GROUP BY 
+    student_id,period order by  period asc;
+    `
+    const [results1,metadata1]=await sequelize.query(query1,{replacements:{sid}})
+    let month=[]
+    for(let i=1;i<=(new Date).getMonth();i++){
+      
+      let query2=`SELECT 
+      period,
+      SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
+      SUM(CASE WHEN attendance_students.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
+      SUM(CASE WHEN attendance_students.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
+  FROM 
+      attendance_students
+  WHERE 
+      attendance_students.student_id =:sid
+      AND DATE(date) <= CURDATE() -- Filter dates until the current date
+      AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
+      and month(date)=:i
+  GROUP BY 
+      YEAR(date), MONTH(date), period
+      order by period asc;
+  `
+  const [results,metadata]=await sequelize.query(query2,{replacements:{sid,i}})
+  month.push({
+    'month':i,
+    "period wise attendance":results
+  })
+    }
+    let query3=`SELECT 
+    SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
+    SUM(CASE WHEN attendance_students.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
+    SUM(CASE WHEN attendance_students.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
+    FROM 
+    attendance_students
+    WHERE 
+    attendance_students.student_id =:sid
+    AND DATE(date) <= CURDATE() and year(date)=year(curdate()) -- Filter dates until the current date
+    GROUP BY 
+    student_id;
+    `
+ const[results3,metadata2]=await sequelize.query(query3,{replacements:{sid}})
+ let total=[]
+ for(let i=1;i<=(new Date).getMonth();i++){
+      
+  let query4=`SELECT 
+  MONTH(date) AS month,
+ 
+  SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
   SUM(CASE WHEN attendance_students.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
   SUM(CASE WHEN attendance_students.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
-from attendance_students
-where attendance_students.student_id=:sid and DATE(date)<=curdate()
-group by period
-`
-let sid=student_id
-const[results,metadata]=await sequelize.query(query,{
-  replacements:{sid}
-}) 
-return results;
-  }catch{
-    throw error
-  }
-}
-export const getStMonthS=async(student_id:any,m:any)=>{
-  // student id,date has values ,period,subjectid,classid is null
-
-  try{
-let data=[]
-const query=` SELECT 
-attendance_students.period,
-SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
-SUM(CASE WHEN attendance_students.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
-SUM(CASE WHEN attendance_students.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
 FROM 
-attendance_students
+  attendance_students
 WHERE 
-attendance_students.student_id = :sid 
-AND MONTH(date) = :month
-AND YEAR(date) = YEAR(CURDATE())  
+  attendance_students.student_id =:sid
+  AND DATE(date) <= CURDATE() -- Filter dates until the current date
+  AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
+  and month(date)=:i
 GROUP BY 
-period;
-
+  student_id,MONTH(date);
 `
-let sid=student_id;
-let month=m;
-const[results,metadata]=await sequelize.query(query,{
-  replacements:{sid,month}
-}) 
-return results;
+const [results,metadata]=await sequelize.query(query4,{replacements:{sid,i}})
+total.push({
+'month':i,
+"total attendance":results
+})
+}
+ data.push({
+  id:s.id,
+  name:s.name,
+  class_details:s.class_details,
+  'period wise attendance till current date':results1,
+   'period wise attendance for each month':month,
+   "total attendance till current date":results3,
+  "total attendance for each month ":total
+
+ }) 
+ return data
+  }
   }catch{
     throw error
   }
 }
+export const getSubjectReport=async(subject:any)=>{
+  try {
+    if(subject==null){
+      return "null"
+    }else{
+   let s= await subjectService.getSubject(subject)
 
-export const getStPeriodS=async(student_id:any,p:any)=>{
-  // student id,date has values ,period,subjectid,classid is null
-
+  }
+  }catch{
+    throw error
+  }
+}
+export const getTeacherReport=async(teacher:any)=>{
+  try {
+    if(teacher==null){
+      return "null"
+    }else{
+      let t= await teacherService.getTeaching(teacher)
+    }
+  }catch{
+    throw error
+  }
+}
+export const getClassReport=async(classe:any)=>{
+  try {
+    if(classe==null){
+      return "no report "
+    }else{
+      let c= await classService.getClass(classe)
+    }
+  }catch{
+    throw error
+  }
+}
+export const getReport = async (student_id:any,class_id:any,teacher_id:any,subject_id:any) => {
   try{
-let data=[]
-const query=` SELECT 
-student_id,period,
-SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
-SUM(CASE WHEN attendance_students.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
-SUM(CASE WHEN attendance_students.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
-FROM 
-attendance_students
-WHERE 
-attendance_students.student_id = :sid 
-AND attendance_students.period = :period
-AND DATE(date) <= CURDATE()  -- Filter dates until the current date
-GROUP BY 
-student_id,period;
 
-`
-let sid=student_id;
-let period=p;
-const[results,metadata]=await sequelize.query(query,{
-  replacements:{sid,period}
-}) 
-return results;
+return {
+  "class ki hazri ki report":await getClassReport(class_id),
+  "student ki hazri ki report":await getStudentReport(student_id),
+  "teacher ki hazri ki report": await getTeacherReport(teacher_id),
+  "kitab k hisab se hazri ki report":await getSubjectReport(subject_id)
+}
   }catch{
     throw error
-  }
-}
-
-
-export const getStatsS = async (period:any, subject_id:any, student_id:any, type:any) => {
-  if (period && subject_id && student_id && type) {
-      // Combination 1: All parameters have values
-
-  } else if (period && subject_id && student_id && !type) {
-      // Combination 2: period, subject_id, student_id have values, type is null
-  } else if (period && subject_id && !student_id && type) {
-      // Combination 3: period, subject_id, type have values, student_id is null
-  } else if (period && subject_id && !student_id && !type) {
-      // Combination 4: period, subject_id have values, student_id and type are null
-  } else if (period && !subject_id && student_id && type) {
-      // Combination 5: period, student_id, type have values, subject_id is null
-  } else if (period && !subject_id && student_id && !type) {
-      // Combination 6: period, student_id have values, subject_id and type are null
-  } else if (!period && subject_id && student_id && type) {
-      // Combination 7: subject_id, student_id, type have values, period is null
-  } else if (!period && subject_id && student_id && !type) {
-      // Combination 8: subject_id, student_id have values, period and type are null
-  } else {
-      // Handle the case where all parameters are null or unexpected combination
   }
 }
 
@@ -456,7 +500,7 @@ export const getStatsS = async (period:any, subject_id:any, student_id:any, type
 
 
   const attendanceService = {
-    mark, getWithinDatesS, getWithinDatesT, getBySidnDate,getByCid,verifyByCid, getStatsS
+    mark, getWithinDatesS, getWithinDatesT, getBySidnDate,getByCid,verifyByCid,getReport
   }
 
   export default attendanceService

@@ -8,6 +8,9 @@ subjectRouter.post("/create", subjectController.create)
 subjectRouter.post("/getUnassigned", subjectController.getUnassigned)
 subjectRouter.post("/getAll", subjectController.getAll)
 subjectRouter.post("/getByCid", subjectController.getByCid)
+subjectRouter.post("/assign", subjectController.assign)
+subjectRouter.post("/update", subjectController.updateDetails)
+
 
 
 // subjectRouter.post("/update", subjectController.createStudent)

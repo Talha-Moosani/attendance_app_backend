@@ -74,9 +74,29 @@ export const createStudent = async (req: Request, res: Response, next: NextFunct
 
     try {
       console.log('Request recieved');
-      const{sid,cid,year}=req.body
+      const{sid,newClass,newName,newYear}=req.body
       console.log(req.body)
-      const resp = await studentService.updateDetails(sid,cid,year);
+      const resp = await studentService.updateDetails(sid,newName,newClass,newYear);
+      console.log(resp)
+      
+
+    //   console.log("refreshToken => " + token)
+  
+    //   res.clearCookie("token", COOKIE_OPTIONS)
+      return res.send(genericResponseByData(resp,{'success':true}))
+    } catch (error) {
+      console.log(error)
+
+      next(error)
+    }
+  }
+  export const getStudent = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      console.log('Request recieved');
+      const{sid}=req.body
+      console.log(req.body)
+      const resp = await studentService.getStudent(sid);
       console.log(resp)
       
 
@@ -92,5 +112,5 @@ export const createStudent = async (req: Request, res: Response, next: NextFunct
   }
 
 export default {
-    createStudent,getAll,getByCid,updateDetails
+    createStudent,getAll,getByCid,updateDetails,getStudent
 }

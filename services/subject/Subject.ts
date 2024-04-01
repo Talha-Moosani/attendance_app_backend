@@ -1,4 +1,4 @@
-import { Op, Sequelize } from "sequelize";
+import { DATEONLY, Op, Sequelize, where } from "sequelize";
 import sequelize from "../../config/db.config"
 import responses from "../../constants/Responses"
 import User from '../../models/User'
@@ -59,6 +59,15 @@ return subjects
     }
   }
 
+  export const assign=async(subject_id:any,class_id:any,teacher_id:any,year:any)=>
+  {
+    try{
+const subject =await teacherService.assignSubject(subject_id,teacher_id,class_id,year)
+return subject
+    } catch{
+      throw error
+    }
+  }
   export const getUnassigned=async(cid:any)=>
   {
     try{
@@ -82,11 +91,13 @@ return results;
 
   export const getByCid=async(cid:any)=>
   {
+     let data=[]
     try{
-const subjects =await Subject.findAll(
-  {where:{class_id:cid}}
-);
-return subjects
+data.push({
+  'wo asbaq jink ustad ki tayeen ho chuki h':await getAssigned(cid,1),
+  "wo asbaq jink ustad ki tayeen nhi hoi": await getUnassigned(cid)
+})
+return data
     } catch{
       throw error
     }
@@ -110,12 +121,91 @@ return subject
       throw error
     }
   }
+  export const updateName=async(subject:any,newName:any)=>
+  {
+    try{
+      console.log("in update name")
+
+if(newName==null){
+  return subject.dataValues.name
+} else{
+  const updated= await subject?.update({name:newName})
+ return updated.dataValues.name
+}
+
+    } catch{
+      throw error
+    }
+  }
+  export const updatePeriod=async(subject:any,newPeriod:any)=>
+  {
+    try{
+      console.log("in update period")
+
+      if(newPeriod==null){
+        return subject.dataValues.period
+      } else{
+        const updated= await subject?.update({period:newPeriod})
+        return updated.dataValues.period
+      }
+    } catch{
+      throw error
+    }
+  }
+  export const updateTeacher=async(subject:any,newTeacher:any)=>
+  {
+    try{
+      console.log("in update teacher")
+
+      let da=new Date()
+        let cda=da.getFullYear();
+       let t= await Teaching.findOne({
+          where:{
+            subject_id:subject.dataValues.id,
+            year:cda
+          }
+        })
+        console.log("in update teacher",t?.dataValues.teacher_id)
+
+      if(newTeacher==null){
+        
+        return t?.dataValues.teacher_id;
+      } else{
+        const updated= await t?.update({teacher_id:newTeacher});
+        return updated?.dataValues.teacher_id
+      }
+    } catch{
+      throw error
+    }
+  }
+
+  export const updateDetails=async(subject_id:any,newName:any,newPeriod:any,newTeacher:any)=>
+  {
+    console.log("in update details")
+    try{
+const subject =await Subject.findByPk(subject_id)
+return{
+  id:subject?.dataValues.id,
+  name:await updateName(subject,newName),
+  period:await updatePeriod(subject,newPeriod),
+  teacher:await updateTeacher(subject,newTeacher)
+}
+    } catch{
+      throw error
+    }
+  }
+  export const getSubject=async(id:any)=>{
+    return await Subject.findByPk(id);
+  }
   const subjectService = {
     create, 
     getByCid,
     getAll,
     getUnassigned,
-    getAssigned
+    getAssigned,
+    assign,
+    updateDetails,
+    getSubject
 }
 
 export default subjectService
