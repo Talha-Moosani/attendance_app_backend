@@ -15,61 +15,75 @@ import ExpectedSyllabus from "../../models/ExpectedSyllabus";
 import ActualSyllabus from "../../models/ActualSyllabus";
 
 //create syllabus
-export const create =async(subject_id:any, month_number:any,pages:any,description:any)=>{
-    try{
-//month number, pages,description, subject_id,year
-let syllabus=await ExpectedSyllabus.create({
-    subject_id:subject_id,
-    month_number:month_number,
-    pages:pages,
-    description:description,
-    year:(new Date()).getFullYear()
-})
-return syllabus
-    }catch{
+export const create = async (subject_id: any, month_number: any, pages: any, description: any) => {
+    try {
+        //month number, pages,description, subject_id,year
+        let syllabus = await ExpectedSyllabus.create({
+            subject_id: subject_id,
+            month_number: month_number,
+            pages: pages,
+            description: description,
+            year: (new Date()).getFullYear()
+        })
+        return syllabus
+    } catch {
         throw error
     }
 }
 //mark syllabus
-export const mark =async(subject_id:any, pages:any,description:any)=>{
-    try{
-let syllabus=await ActualSyllabus.create({
-    subject_id:subject_id,
-    month_number:(new Date()).getMonth(),
-    pages:pages,
-    description:description,
-    year:(new Date()).getFullYear()
-})
-return syllabus
-    }catch{
+export const mark = async (subject_id: any, pages: any, description: any) => {
+    try {
+        let syllabus = await ActualSyllabus.create({
+            subject_id: subject_id,
+            month_number: (new Date()).getMonth(),
+            pages: pages,
+            description: description,
+            year: (new Date()).getFullYear()
+        })
+        return syllabus
+    } catch {
         throw error
     }
 }
 //delete syllabus
-export const deleteSyllabus = async(subject_id:any)=>{
-    try{
+export const deleteSyllabus = async (subject_id: any) => {
+    try {
 
-    }catch{
+    } catch {
         throw error
     }
 }
 //getReport
-export const get =async(subject_id:any)=>{
-    try{
-return{
-    'expected':await ExpectedSyllabus.findAll({where:{
-    subject_id:subject_id,
-    year:(new Date()).getFullYear()
-    },attributes:['month_number','pages','description','year']}),
-
-    'actual':await ActualSyllabus.findAll({where:{
-        subject_id:subject_id,
-        year:(new Date()).getFullYear()
-        },attributes:['month_number','pages','description','year']}),
-    //'remarks':
-} 
+export const get = async (subject_id: any) => {
+    try {
+        let monthly = []
+        for (let i = 1; i <= (new Date()).getMonth(); i++) {
+            let expected = await ExpectedSyllabus.findOne({
+                where: {
+                    subject_id: subject_id,
+                    year: (new Date()).getFullYear(),
+                    month_number:i
+                },
+                 attributes: [ 'pages', 'description', 'year']
+            })
+            let actual = await ActualSyllabus.findAll({
+                where: {
+                    subject_id: subject_id,
+                    year: (new Date()).getFullYear(),
+                    month_number: i
+                },
+                attributes: [ 'pages', 'description', 'year']
+            })
+            monthly.push({
+                // return the latest entry for the month i 
+                "for month":i,
+"expected": expected,
+                "actual": actual.at(actual.length - 1)
+            })
+        }
+        return monthly
     }
-    catch{
+    catch {
         throw error
     }
 }
@@ -88,8 +102,8 @@ return{
 //         throw error
 //       }
 //     }
-const syllabusService={
-    create,mark,get,deleteSyllabus
+const syllabusService = {
+    create, mark, get, deleteSyllabus
 }
 
-    export default syllabusService
+export default syllabusService

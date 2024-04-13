@@ -19,6 +19,7 @@ import exp from "constants";
 import teacherService from "../teacher/Teacher";
 import subjectService from "../subject/Subject";
 import classService from "../class/Class";
+import json2xls from 'json2xls';
 
 //create 
 //name,student_id,subject_id,teacher_id,date
@@ -442,6 +443,7 @@ total.push({
   "total attendance for each month ":total
 
  }) 
+ 
  return data
   }
   }catch{
@@ -469,7 +471,82 @@ export const getTeacherReport=async(teacher:any)=>{
       let t= (await teacherService.getTeaching(teacher))
       let data=[]
       let tid=teacher
+      let query1=`select classes.id as class_id, classes.name as class_name, subjects.period, subjects.name as subject_name, 
+      SUM(CASE WHEN attendance_teachers.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
+          SUM(CASE WHEN attendance_teachers.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
+          SUM(CASE WHEN attendance_teachers.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
+      from 
+      attendance_teachers join teachers on attendance_teachers.teacher_id=teachers.id join subjects on attendance_teachers.subject_id=subjects.id join classes on classes.id=subjects.class_id
+      WHERE 
+          attendance_teachers.teacher_id =:tid
+          AND DATE(date) <= CURDATE() -- Filter dates until the current date
+          AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
+      group by attendance_teachers.teacher_id,attendance_teachers.subject_id order by class_id asc;`
+    const[results1,metadata1]=await sequelize.query(query1,{replacements:{tid}})
+    data.push({
+      "teacher ki aj tk ki hazri apni kitab k ghnte mn":results1
+    })
+      for(let i=1;i<=(new Date).getMonth();i++){
+      
+        let query2=`select month(date) as month,classes.id as class_id, classes.name as class_name, subjects.id as subject_id, subjects.name as subject_name, subjects.period,
+        SUM(CASE WHEN attendance_teachers.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
+            SUM(CASE WHEN attendance_teachers.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
+            SUM(CASE WHEN attendance_teachers.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
+        from 
+        attendance_teachers join teachers on attendance_teachers.teacher_id=teachers.id join subjects on attendance_teachers.subject_id=subjects.id join classes on classes.id=subjects.class_id
+        WHERE 
+            attendance_teachers.teacher_id =:tid and
+            month(date)=:i
+            AND DATE(date) <= CURDATE() -- Filter dates until the current date
+            AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
+        group by attendance_teachers.teacher_id,attendance_teachers.subject_id , month(date) order by month, class_id asc;
+    `
+    const [results2,metadata2]=await sequelize.query(query2,{replacements:{tid,i}})
+    data.push({
+      "month":i,
+      "teacher ki hazri apni kitab k ghnte mn is maheene mn":results2
+    })
+
+      }
+      let query3=`select 
+      SUM(CASE WHEN attendance_teachers.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
+          SUM(CASE WHEN attendance_teachers.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
+          SUM(CASE WHEN attendance_teachers.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
+      from 
+      attendance_teachers
+      WHERE 
+          attendance_teachers.teacher_id =:tid 
+          AND DATE(date) <= CURDATE() -- Filter dates until the current date
+          AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
+      group by attendance_teachers.teacher_id;`
+      const [results3,metadata3]=await sequelize.query(query3,{replacements:{tid}})
+      data.push({
+        "teacher ki total hazri":results3
+      })
+      for(let i=1;i<=(new Date).getMonth();i++){
+      
+        let query4=`select month(date) as month,
+        SUM(CASE WHEN attendance_teachers.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
+            SUM(CASE WHEN attendance_teachers.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
+            SUM(CASE WHEN attendance_teachers.attendance_id = 3 THEN 1 ELSE 0 END) AS 'leave'
+        from 
+        attendance_teachers
+        WHERE 
+            attendance_teachers.teacher_id =:tid and month(date)=:i
+            AND DATE(date) <= CURDATE() -- Filter dates until the current date
+            AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
+        group by attendance_teachers.teacher_id, month(date) order by month(date) asc;
+    `
+    const [results4,metadata2]=await sequelize.query(query4,{replacements:{tid,i}})
+    data.push({
+      "month":i,
+      "teacher ki total hazri":results4
+    })
+      }
+    return data
+    
     }
+   
   }catch{
     throw error
   }
@@ -485,6 +562,7 @@ export const getClassReport=async(classe:any)=>{
     throw error
   }
 }
+
 export const getReport = async (student_id:any,class_id:any,teacher_id:any,subject_id:any) => {
   try{
 

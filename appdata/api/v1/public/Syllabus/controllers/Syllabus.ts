@@ -28,7 +28,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
   export const mark = async (req: Request, res: Response, next: NextFunction) => {
     try {
        console.log('Request recieved')
-      const {month_number,description,pages,subject_id} = req.body
+      const {description,pages,subject_id} = req.body
       console.log(req.body)
       const resp = await syllabusService.mark(subject_id,pages,description);
       console.log(resp)
