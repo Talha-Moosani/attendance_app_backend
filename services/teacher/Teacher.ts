@@ -12,6 +12,7 @@ import Teaching from "../../models/Teaching";
 import { error } from "console";
 import Class from "../../models/Classes";
 import subjectService from "../subject/Subject";
+import classService from "../class/Class";
 //create 
 export const create = async (name: any) => {
 
@@ -89,22 +90,37 @@ export const getTeacher=async(id:any)=>{
   
   return await Teacher.findByPk(id);
 }
-export const getTeaching=async(teacher_id:any)=>{
- let teaching=await Teaching.findOne({
-  where:{
-    teacher_id:teacher_id,
-    year: new Date().getFullYear()
-  }
-})
-  
+export const getTeaching = async (teacher_id: any) => {
+  let teaching = await Teaching.findAll({
+    where: {
+      teacher_id: teacher_id,
+      year: new Date().getFullYear()
+    }
+  });
+
+  // Extracting class_ids into an array
+  const class_ids = await Promise.all(teaching.map(async (item) => {
+    return (await classService.getClass(item.dataValues.class_id));
+}));
+
+  // Extracting subject_ids into an array
+  const subject_ids = await Promise.all(teaching.map(async (item) => {
+    return (await subjectService.getSubject(item.dataValues.subject_id));
+}));
+
+ 
+
   return {
     id: teacher_id,
     name: (await getTeacher(teacher_id))?.dataValues.name,
-    class_id: teaching?.dataValues.class_id,
-    subject_id: teaching?.dataValues.subject_id,
-    period: (await subjectService.getSubject(teaching?.dataValues.subject_id))?.dataValues.period
+    class_details: class_ids, // Assigning the array of class_ids
+    subject_details: subject_ids, // Assigning the array of subject_ids
+    //period: periods // Assigning the array of periods
+  };
 };
-}
+
+
+
 const teacherService = {
   create, assignSubject, viewAll, viewByCid,getTeaching
 }

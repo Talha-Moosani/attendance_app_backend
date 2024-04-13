@@ -33,7 +33,8 @@ const ActualSyllabus = sequelize.define(
     year: {
       allowNull: false,
       type: DataTypes.INTEGER,
-    },    description: {
+    },    
+    description: {
       allowNull: false,
       type: DataTypes.STRING,
     },
@@ -57,6 +58,7 @@ const ActualSyllabus = sequelize.define(
       allowNull: false,
       defaultValue: Sequelize.fn('now'),
     },
+    
   },
   {
     underscored: true,

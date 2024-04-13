@@ -54,6 +54,10 @@ const ExpectedSyllabus = sequelize.define(
       allowNull: false,
       defaultValue: Sequelize.fn('now'),
     },
+    year: {
+      allowNull: false,
+      type: DataTypes.INTEGER,
+    }
   },
   {
     underscored: true,
@@ -62,6 +66,6 @@ const ExpectedSyllabus = sequelize.define(
   }
 )
 
-// ExpectedSyllabus.sync({alter: true})
+ //ExpectedSyllabus.sync({alter: true})
 
 export default ExpectedSyllabus

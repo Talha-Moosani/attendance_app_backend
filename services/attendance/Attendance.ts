@@ -461,11 +461,14 @@ export const getSubjectReport=async(subject:any)=>{
   }
 }
 export const getTeacherReport=async(teacher:any)=>{
+  // for each class teacher is teaching in get attendance till today and for each month 
   try {
     if(teacher==null){
       return "null"
     }else{
-      let t= await teacherService.getTeaching(teacher)
+      let t= (await teacherService.getTeaching(teacher))
+      let data=[]
+      let tid=teacher
     }
   }catch{
     throw error

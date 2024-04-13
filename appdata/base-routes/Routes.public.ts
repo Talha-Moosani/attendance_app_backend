@@ -10,6 +10,7 @@ import classRoutes from "../api/v1/public/Class/routes/Class"
 import subjectRoutes from "../api/v1/public/Subject/routes/Subject"
 import attendanceRoutes from "../api/v1/public/Attendance/routes/Attendance"
 import teacherRoutes from "../api/v1/public/Teacher/routes/Teacher"
+import syllabusRoutes from "../api/v1/public/Syllabus/routes/Syllabus"
 const publicRouter = express.Router()
 publicRouter.use('/v1/session', userSessionRoutes)
 publicRouter.use('/v1/admin/auth', adminAuthRouter)
@@ -21,6 +22,7 @@ publicRouter.use('/v1/classes', classRoutes)
 publicRouter.use('/v1/subjects', subjectRoutes)
 publicRouter.use('/v1/attendance', attendanceRoutes)
 publicRouter.use('/v1/teacher',teacherRoutes)
+publicRouter.use('/v1/syllabus',syllabusRoutes)
 
 
 

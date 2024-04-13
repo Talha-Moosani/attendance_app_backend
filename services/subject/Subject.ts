@@ -49,11 +49,25 @@ WHERE subjects.class_id =:c AND teachings.year=:y
   
   export const getAll=async()=>
   {
-    try{
-const subjects =await Subject.findAll(
-  
-);
-return subjects
+    try{ let query=`SELECT 
+    subjects.id,
+    subjects.name,
+    subjects.period,
+    subjects.class_id,
+    teachers.id AS teacher_id,
+    teachers.name AS teacher_name 
+FROM 
+    subjects  
+LEFT JOIN 
+    teachings ON subjects.id = teachings.subject_id AND teachings.year = YEAR(CURDATE())
+LEFT JOIN 
+    teachers ON teachings.teacher_id = teachers.id
+WHERE 
+    teachings.year = YEAR(CURDATE()) OR teachings.subject_id IS NULL;
+` 
+const [results,metadata]=await sequelize.query(query)
+
+return results
     } catch{
       throw error
     }
@@ -195,7 +209,7 @@ return{
     }
   }
   export const getSubject=async(id:any)=>{
-    return await Subject.findByPk(id);
+    return (await Subject.findByPk(id));
   }
   const subjectService = {
     create, 
