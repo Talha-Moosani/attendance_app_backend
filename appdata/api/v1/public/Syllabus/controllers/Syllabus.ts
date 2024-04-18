@@ -44,12 +44,32 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
       next(error)
     }
   }
+  export const getAssignedExpected=async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+      console.log('Request recieved')
+     const {class_id} = req.body
+     console.log(req.body)
+     const resp = await syllabusService.getExpected(class_id);
+     console.log(resp)
+     
+
+   //   console.log("refreshToken => " + token)
+ 
+   //   res.clearCookie("token", COOKIE_OPTIONS)
+     return res.send(genericResponseByData(resp,{'success':true}))
+   } catch (error) {
+     console.log(error)
+
+     next(error)
+   }
+ }
+  
   export const get = async (req: Request, res: Response, next: NextFunction) => {
     try {
        console.log('Request recieved')
-      const {subject_id} = req.body
+      const {class_id} = req.body
       console.log(req.body)
-      const resp = await syllabusService.get(subject_id);
+      const resp = await syllabusService.get(class_id);
       console.log(resp)
       
 
@@ -64,6 +84,6 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
     }
   }
   export default {
-    create,mark,get
+    create,mark,get,getAssignedExpected
 
 }

@@ -10,6 +10,7 @@ attendanceRouter.post("/getByCidnDate",attendanceController.getByCidnDate)
 attendanceRouter.post("/getByCid",attendanceController.getByCid)
 attendanceRouter.post("/verifyByCid",attendanceController.verifyByCid)
 attendanceRouter.post("/getReport",attendanceController.getReport)
+attendanceRouter.post("/getByte",attendanceController.sendByte)
 
 
 // attendanceRouter.post("/update", attendanceController.update)

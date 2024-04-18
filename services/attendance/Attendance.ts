@@ -20,8 +20,7 @@ import teacherService from "../teacher/Teacher";
 import subjectService from "../subject/Subject";
 import classService from "../class/Class";
 import json2xls from 'json2xls';
-
-//create 
+const XLSX = require('xlsx');//create 
 //name,student_id,subject_id,teacher_id,date
 export const mark = async ( teacher_id: any, teacher_attendance: any, studentData: any, subject_id: any, period:any) => {
   let data = []
@@ -345,8 +344,45 @@ return data;
   }catch{
     throw error
   }
+}/**
+ * 
+ * @param fileName name of workbook
+ * @param listRN a list having objects where each object is pair of resp and name
+ */
+ export const jts=async(fileName:any,listRN:any)=>{
+  
+// // Assume 'resp' contains the JSON data received from the server
+const workbook = XLSX.utils.book_new();
+for( let i=0;i<listRN.length;i++){
+  const ws = XLSX.utils.json_to_sheet(listRN.at(i).resp);
+  XLSX.utils.book_append_sheet(workbook, ws, (listRN.at(i).name));
 }
+XLSX.writeFile(workbook, fileName, { compression: true });
+return "file downloaded"
 
+ } 
+ export const monthTOname= async (list:unknown[])=>{
+
+  const resultWithMonthNames = list.map((item:any) => {
+    const monthNames = [
+        "", // Months are 1-based, so index 0 is unused
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+    ];
+
+    const monthNumber = item.month;
+    if (monthNumber >= 1 && monthNumber <= 12) {
+        item.month = monthNames[monthNumber];
+    } else {
+        item.month = "Invalid Month";
+    }
+
+    return item;
+});
+console.log(resultWithMonthNames)
+return resultWithMonthNames
+ }
 export const getStudentReport=async(student:any)=>{
   try {
     
@@ -354,7 +390,8 @@ export const getStudentReport=async(student:any)=>{
       return "null"
     }else{
    let s= await studentService.getStudent(student)
-   let data=[]
+
+   let listRN=[]
     let sid=student
     let query1=`SELECT 
     period,
@@ -369,11 +406,17 @@ export const getStudentReport=async(student:any)=>{
     GROUP BY 
     student_id,period order by  period asc;
     `
-    const [results1,metadata1]=await sequelize.query(query1,{replacements:{sid}})
-    let month=[]
-    for(let i=1;i<=(new Date).getMonth();i++){
+    const [results1,metadata1]=await sequelize.query(
+      query1,
+      {replacements:{sid},
+      raw:true}
+    )
+listRN.push({resp:results1,name:"period wise hazri till today"})
+    
+    
+    
       
-      let query2=`SELECT 
+      let query2=`SELECT month(date) as month,
       period,
       SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
       SUM(CASE WHEN attendance_students.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
@@ -384,17 +427,14 @@ export const getStudentReport=async(student:any)=>{
       attendance_students.student_id =:sid
       AND DATE(date) <= CURDATE() -- Filter dates until the current date
       AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
-      and month(date)=:i
   GROUP BY 
-      YEAR(date), MONTH(date), period
-      order by period asc;
+      YEAR(date), month(date), period
+      order by month(date), period asc;
   `
-  const [results,metadata]=await sequelize.query(query2,{replacements:{sid,i}})
-  month.push({
-    'month':i,
-    "period wise attendance":results
-  })
-    }
+  const [results,metadata]=await sequelize.query(query2,{replacements:{sid},raw:true})
+ 
+listRN.push({resp:await(monthTOname(results)),name:"hr period ki month wise hazri"})
+
     let query3=`SELECT 
     SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
     SUM(CASE WHEN attendance_students.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
@@ -407,12 +447,14 @@ export const getStudentReport=async(student:any)=>{
     GROUP BY 
     student_id;
     `
- const[results3,metadata2]=await sequelize.query(query3,{replacements:{sid}})
- let total=[]
- for(let i=1;i<=(new Date).getMonth();i++){
+ const[results3,metadata2]=await sequelize.query(query3,{replacements:{sid},raw:true})
+
+listRN.push({resp:results3,name:"total hazri"})
+
+ 
       
   let query4=`SELECT 
-  MONTH(date) AS month,
+  month(date) AS month,
  
   SUM(CASE WHEN attendance_students.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
   SUM(CASE WHEN attendance_students.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
@@ -423,28 +465,18 @@ WHERE
   attendance_students.student_id =:sid
   AND DATE(date) <= CURDATE() -- Filter dates until the current date
   AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
-  and month(date)=:i
+  
 GROUP BY 
-  student_id,MONTH(date);
+  student_id,month(date)
+  order by month(date) asc;
 `
-const [results,metadata]=await sequelize.query(query4,{replacements:{sid,i}})
-total.push({
-'month':i,
-"total attendance":results
-})
-}
- data.push({
-  id:s.id,
-  name:s.name,
-  class_details:s.class_details,
-  'period wise attendance till current date':results1,
-   'period wise attendance for each month':month,
-   "total attendance till current date":results3,
-  "total attendance for each month ":total
-
- }) 
- 
- return data
+const [results4,metadata4]=await sequelize.query(query4,{replacements:{sid},raw:true})
+const str="Student"+s.id+"_"+s.name.replace(/\s/g, '')+".xlsx"
+console.log(str)
+listRN.push({resp:await(monthTOname(results4)),name:"hr month ki total hazri"})
+let check=jts(str,listRN)
+console.log(check)
+ return {path: 'C:\\Users\\aliiq\\attendance_app_backend\\attendance_app_backend\\'+str}
   }
   }catch{
     throw error
@@ -470,6 +502,7 @@ export const getTeacherReport=async(teacher:any)=>{
     }else{
       let t= (await teacherService.getTeaching(teacher))
       let data=[]
+      let listRN=[]
       let tid=teacher
       let query1=`select classes.id as class_id, classes.name as class_name, subjects.period, subjects.name as subject_name, 
       SUM(CASE WHEN attendance_teachers.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
@@ -483,10 +516,11 @@ export const getTeacherReport=async(teacher:any)=>{
           AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
       group by attendance_teachers.teacher_id,attendance_teachers.subject_id order by class_id asc;`
     const[results1,metadata1]=await sequelize.query(query1,{replacements:{tid}})
-    data.push({
-      "teacher ki aj tk ki hazri apni kitab k ghnte mn":results1
-    })
-      for(let i=1;i<=(new Date).getMonth();i++){
+    
+listRN.push({resp:results1,name:"hazri apni kitab k ghnte mn"})
+
+    
+      
       
         let query2=`select month(date) as month,classes.id as class_id, classes.name as class_name, subjects.id as subject_id, subjects.name as subject_name, subjects.period,
         SUM(CASE WHEN attendance_teachers.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
@@ -495,19 +529,17 @@ export const getTeacherReport=async(teacher:any)=>{
         from 
         attendance_teachers join teachers on attendance_teachers.teacher_id=teachers.id join subjects on attendance_teachers.subject_id=subjects.id join classes on classes.id=subjects.class_id
         WHERE 
-            attendance_teachers.teacher_id =:tid and
-            month(date)=:i
+            attendance_teachers.teacher_id =:tid 
+            
             AND DATE(date) <= CURDATE() -- Filter dates until the current date
             AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
-        group by attendance_teachers.teacher_id,attendance_teachers.subject_id , month(date) order by month, class_id asc;
+        group by attendance_teachers.teacher_id,attendance_teachers.subject_id , month(date) order by month(date), class_id asc;
     `
-    const [results2,metadata2]=await sequelize.query(query2,{replacements:{tid,i}})
-    data.push({
-      "month":i,
-      "teacher ki hazri apni kitab k ghnte mn is maheene mn":results2
-    })
+    const [results2,metadata2]=await sequelize.query(query2,{replacements:{tid},raw:true})
+    
+listRN.push({resp:await(monthTOname(results2)),name:"hazri apni kitab ki mahanawar"})
 
-      }
+      
       let query3=`select 
       SUM(CASE WHEN attendance_teachers.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
           SUM(CASE WHEN attendance_teachers.attendance_id = 2 THEN 1 ELSE 0 END) AS absent,
@@ -519,11 +551,11 @@ export const getTeacherReport=async(teacher:any)=>{
           AND DATE(date) <= CURDATE() -- Filter dates until the current date
           AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
       group by attendance_teachers.teacher_id;`
-      const [results3,metadata3]=await sequelize.query(query3,{replacements:{tid}})
-      data.push({
-        "teacher ki total hazri":results3
-      })
-      for(let i=1;i<=(new Date).getMonth();i++){
+      const [results3,metadata3]=await sequelize.query(query3,{replacements:{tid},raw:true})
+     
+      listRN.push({resp:results3,name:"total hazri aj tk"})
+      
+      
       
         let query4=`select month(date) as month,
         SUM(CASE WHEN attendance_teachers.attendance_id = 1 THEN 1 ELSE 0 END) AS present,
@@ -532,18 +564,19 @@ export const getTeacherReport=async(teacher:any)=>{
         from 
         attendance_teachers
         WHERE 
-            attendance_teachers.teacher_id =:tid and month(date)=:i
+            attendance_teachers.teacher_id =:tid
             AND DATE(date) <= CURDATE() -- Filter dates until the current date
             AND YEAR(date) = YEAR(CURDATE()) -- Filter by current year
         group by attendance_teachers.teacher_id, month(date) order by month(date) asc;
     `
-    const [results4,metadata2]=await sequelize.query(query4,{replacements:{tid,i}})
-    data.push({
-      "month":i,
-      "teacher ki total hazri":results4
-    })
-      }
-    return data
+    const [results4,metadata4]=await sequelize.query(query4,{replacements:{tid},raw:true})
+    const str="Teacher"+tid+"_"+t.name.replace(/\s/g, '')+".xlsx"
+console.log(str)
+listRN.push({resp:await(monthTOname(results4)),name:"hr maheene ki total hazri"})
+let check=jts(str,listRN)
+console.log(check)
+      
+return {path: 'C:\\Users\\aliiq\\attendance_app_backend\\attendance_app_backend\\'+str}
     
     }
    
@@ -569,8 +602,8 @@ export const getReport = async (student_id:any,class_id:any,teacher_id:any,subje
 return {
   "class ki hazri ki report":await getClassReport(class_id),
   "student ki hazri ki report":await getStudentReport(student_id),
-  "teacher ki hazri ki report": await getTeacherReport(teacher_id),
-  "kitab k hisab se hazri ki report":await getSubjectReport(subject_id)
+ "teacher ki hazri ki report": await getTeacherReport(teacher_id),
+  // "kitab k hisab se hazri ki report":await getSubjectReport(subject_id)
 }
   }catch{
     throw error
@@ -581,7 +614,7 @@ return {
 
 
   const attendanceService = {
-    mark, getWithinDatesS, getWithinDatesT, getBySidnDate,getByCid,verifyByCid,getReport
+    mark, getWithinDatesS, getWithinDatesT, getBySidnDate,getByCid,verifyByCid,getReport,monthTOname,jts
   }
 
   export default attendanceService
